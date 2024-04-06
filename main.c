@@ -6,15 +6,19 @@
 
 
 int main(void){
-	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-	InitWindow(GetScreenWidth(), GetScreenHeight(), "test");
+	//SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	
+	int width = 1000;
+	int height = 800;
+	InitWindow(width, height, "NEAT");
 
 	SetTargetFPS(60);
 	//HideCursor();
 	
 	//srand(time(NULL));
 
-	//int player_x = GetScreenWidth() / 2, player_y = GetScreenHeight() / 2;
+	int player_x = width * 0.1, player_y = height * 0.9;
+	int goal_x =  width * 0.9, goal_y = height * 0.1;
 
 
 	while (!WindowShouldClose()){
@@ -22,10 +26,11 @@ int main(void){
 
 
 		ClearBackground(RAYWHITE);
-		DrawText("test of neat", GetScreenWidth() / 2,  GetScreenHeight()/ 2, 20, BLACK);
+		DrawRectangle(width / 2, height / 2, 300, 300, BLACK);
 
 
-		//DrawCircle(player_x, player_y, 10, PURPLE);
+		DrawCircle(player_x, player_y, 10, PURPLE);
+		DrawCircle(goal_x, goal_y, 30, YELLOW);
 
 
 		EndDrawing();
