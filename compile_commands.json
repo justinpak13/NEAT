@@ -1,0 +1,27 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-framework",
+      "CoreVideo",
+      "-framework",
+      "IOKit",
+      "-framework",
+      "Cocoa",
+      "-framework",
+      "GLUT",
+      "-I",
+      "include",
+      "-framework",
+      "OpenGL",
+      "lib/libraylib.a",
+      "-o",
+      "my_app",
+      "main.c"
+    ],
+    "directory": "/Users/justinpak/Documents/programming/NEAT",
+    "file": "/Users/justinpak/Documents/programming/NEAT/main.c",
+    "output": "/Users/justinpak/Documents/programming/NEAT/my_app"
+  }
+]
