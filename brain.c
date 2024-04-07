@@ -4,14 +4,6 @@
 #include "brain.h"
 #include <time.h>
 
-typedef struct Brain{
-	int number_of_inputs;
-	int number_of_layers;
-	int number_of_outpus; 
-	vector *layers[];
-} Brain;
-
-
 Brain *create_brain(int n_inputs, int n_layers, int n_outputs, int heights_of_layers[]){
 	Brain *brain = malloc(sizeof(Brain) + sizeof(int) * 3 +  sizeof(vector) * 2 * n_layers);
 
@@ -33,10 +25,10 @@ Brain *create_brain(int n_inputs, int n_layers, int n_outputs, int heights_of_la
 	return brain;
 }
 
-void mutate_brain(Brain *brain, int mutation_rate){
+void mutate_brain(Brain *brain, float mutation_rate){
 	for (int i = 0; i < brain -> number_of_layers * 2; i++){
 		for (int j = 0; j < brain -> layers[i] -> length; j++){
-			if (rand() % 100 <= mutation_rate ){
+			if ((float)(rand() / (float)RAND_MAX) <= mutation_rate ){
 				brain -> layers[i] -> array[j] = randn(0.0, 1.0);
 			}
 		}
@@ -220,7 +212,7 @@ int get_move(vector *output){
 	int max_index = 0;;
 
 	for (int i = 0; i < output -> length; i++){
-		printf("%f ", output -> array[i]);
+		//printf("%f ", output -> array[i]);
 		if (output -> array[i] > max_value){
 			max_value = output -> array[i];
 			max_index = i;
