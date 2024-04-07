@@ -67,35 +67,42 @@ vector *get_inputs(Player *player, int goal_x, int goal_y, Vector2 rectangle_vec
 
 void move_player(int move, Player *player){
 	if (move == 0){
-		player -> x += 1;
+		player -> x += 3;
 	}
 
 	if (move == 1){
 
-		player -> x -= 1;
+		player -> x -= 3;
 	}
 	
 	if (move == 2){
-		player -> y += 1;
+		player -> y += 3;
 	}
 
 	if (move == 3){
-		player -> y -= 1;
+		player -> y -= 3;
 	}
 }
 
 double get_distance(Player *player, int goal_x, int goal_y){
-	return sqrt(pow(goal_x - player -> x, 2.0) + pow(goal_y - player -> y, 3.0));
+	return sqrt(pow(goal_x - player -> x, 2.0) + pow(goal_y - player -> y, 2.0));
 }
 
 int calculate_score(Player *player, int goal_x, int goal_y){
-	int points = -pow(get_distance(player,goal_x, goal_y), 2);
-	if (points == 0 ){
-		if (player -> number_of_touches == 0){
-			points = 500;
-		}
-		points += 10 * player -> number_of_touches;
+	int points = -pow(get_distance(player,goal_x, goal_y), 2.3);
+	if (player -> x == goal_x ){
+		points += 10;
 	}
+
+	if (player -> y == goal_y ){
+		points += 10;
+	}
+	//if (points == 0 ){
+	//	if (player -> number_of_touches == 0){
+	//		points = 500;
+	//	}
+	//	points += 10 * player -> number_of_touches;
+	//}
 
 	return points;
 }
@@ -103,15 +110,15 @@ int calculate_score(Player *player, int goal_x, int goal_y){
 double calculate_mutation_rate(double player_score){
 	if (player_score > -100){
 		if (player_score > -50){
-			return -(1/player_score) / 500;
+			return -(1/player_score) / 100;
 		}
-		return -(1/player_score) / 100;
+		return -(1/player_score) / 50;
 	}
 	return log10(-player_score) / log10(15) / 100;
 }
 
 int main(void){
-	int number_of_players = 200;
+	int number_of_players = 1000;
 	float mutation_rate = 0.50; // represent 50%
 
 	//SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -120,7 +127,7 @@ int main(void){
 	int height = 800;
 	InitWindow(width, height, "NEAT");
 
-	SetTargetFPS(700);
+	SetTargetFPS(200);
 	//HideCursor();
 	
 	srand(time(NULL));
@@ -129,7 +136,7 @@ int main(void){
 	int player_x = width * (rand() % 25 / 100.0), player_y = height * (100 - (rand() % 25)) / 100;
 
 	// need to generate the goal somewhere in the upper right quarter of the screen 
-	int goal_x =  width * (100 - (rand() % 25)) / 100, goal_y = height * (rand() % 25 / 100.0);
+	int goal_x =  width * (100 - (rand() % 25)) / 100 - 30, goal_y = height * (rand() % 25 / 100.0) + 30;
 
 
 	// width and height between 0 and 60%
@@ -143,9 +150,9 @@ int main(void){
 	Vector2 rectangle_vector_size = (Vector2) {rectangle_width, rectangle_height};
 
 
-	int heights[4] = {16, 10, 4};
+	int heights[4] = {16, 10, 10, 4};
 
-	Brain *best_brain = create_brain(16, 3, 4, heights);
+	Brain *best_brain = create_brain(16, 4, 4, heights);
 
 	// create brain list
 	Brain *brain_list[number_of_players];
@@ -195,10 +202,10 @@ int main(void){
 				free(inputs);
 				free(results);
 
-				player_list[i] -> average_score = (player_list[i] -> average_score +  calculate_score(player_list[i], goal_x,  goal_y)) / 2; 
+				//player_list[i] -> average_score = (player_list[i] -> average_score +  calculate_score(player_list[i], goal_x,  goal_y)) / 2; 
 
 				if (player_list[i] -> x < 0 || player_list[i] -> y < 0 || player_list[i] -> x > width || player_list[i] -> y > height){
-					player_list[i] -> average_score -= 15000;
+					player_list[i] -> average_score -= 2000;
 					player_list[i] -> dead = true;
 				}
 
@@ -206,13 +213,13 @@ int main(void){
 					&& player_list[i] -> x <  rectangle_vector.x + rectangle_vector_size.x 
 					&&player_list[i] -> y  > rectangle_vector.y 
 					&& player_list[i] -> y <  rectangle_vector.y + rectangle_vector_size.y){
-					player_list[i] -> average_score -= 15000;
+					player_list[i] -> average_score -= 2000;
 					player_list[i] -> dead = true;
 				}
 			}
 		}
 		clock_t end = clock();
-		if (((double) end - (double)begin) / CLOCKS_PER_SEC >=0.8){
+		if (((double) end - (double)begin) / CLOCKS_PER_SEC >=1.5){
 			empty_check = true;
 		} 
 
@@ -221,7 +228,12 @@ int main(void){
 		}
 
 		if (empty_check){
+
 			for (int i = 0; i < number_of_players; i++){
+				player_list[i] -> average_score += calculate_score(player_list[i], goal_x,  goal_y); 
+				if (!player_list[i] -> dead){
+					player_list[i] -> average_score += 200; //* (1 - (get_distance(player_list[i],  goal_x,  goal_y)) / );
+				}
 				if (player_list[i] -> average_score > best_score){
 					printf("Player # %d Score: %f\n", i, player_list[i] -> average_score);
 					best_score = player_list[i] -> average_score;
