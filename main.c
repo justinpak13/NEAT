@@ -114,7 +114,7 @@ double calculate_mutation_rate(double player_score){
 		}
 		return -(1/player_score) / 50;
 	}
-	return log10(-player_score) / log10(15) / 100;
+	return log10(-player_score) / log10(15) / 50;
 }
 
 int main(void){
@@ -219,7 +219,7 @@ int main(void){
 			}
 		}
 		clock_t end = clock();
-		if (((double) end - (double)begin) / CLOCKS_PER_SEC >=1.5){
+		if (((double) end - (double)begin) / CLOCKS_PER_SEC >=1.2){
 			empty_check = true;
 		} 
 
